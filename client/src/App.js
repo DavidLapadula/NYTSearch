@@ -4,7 +4,7 @@ import Articles from "./pages/Articles";
 
 const App = () => (
   <Router>
-    <div className="bg-white p-3 m-3">
+    <div className="main-page p-3 mx-auto">
       <Switch>
         <Route exact path="/" component={Articles} />
         <Route exact path="/articles" component={Articles} />

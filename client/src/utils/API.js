@@ -2,13 +2,13 @@ require('dotenv').config();
 
 const axios = require('axios'); 
 
-let key = process.env.API_KEY; 
+let key = '?api-key=1cf4863687224e15be90a11d808e7941'; 
 
 const api = {
     // Query NYT API for articles
     getArticles: function (query, beginDate, endDate) {
         const URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-        return axios.get(`${URL}${key}&q=${query}&begin_date=${beginDate}&0101&end_date=${endDate}0101`);
+        return axios.get(`${URL}${key}&q=${query}&begin_date=${beginDate}&end_date=${endDate}`);
     },
     // save an article to the db
     saveArticle: function(articleData) {
@@ -20,7 +20,8 @@ const api = {
     },
     // Deletes an article from the db
     deleteArticle: function (id) {
-        return axios.delete(`/api/saved/${id}`);
+        return axios.delete(`/api/articles/${id}`);
+
     }
 };
 

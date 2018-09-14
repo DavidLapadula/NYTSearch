@@ -5,8 +5,13 @@ body {
   background: url("./images/nyt-br.jpg"); 
   background-color: rgba(255, 255, 255, 0.5); 
   background-position: center; 
-  background-size: cover; 
   background-repeat: no-repeat; 
+  margin: 50px; 
+}
+
+.main-page {
+  background-color:  rgba(255, 255, 255, 0.5); 
+  max-width: 1500px; 
 }
 
 .font-1 {

@@ -1,1 +1,2 @@
-export { default } from "./SearchForm";
+export * from "./Input";
+export * from "./FormBtn";

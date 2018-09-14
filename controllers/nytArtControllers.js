@@ -4,10 +4,9 @@ const db = require("../models");
 module.exports = {
     create: function (req, res) {
         const article = {
-            _id: req.body._id,
-            title: req.body.headline.main,
-            url: req.body.web_url,
-            date: req.body.pub_date
+            title: req.body.title,
+            url: req.body.url,
+            date: req.body.date
         };
         db.Article
             .create(article)
@@ -19,5 +18,13 @@ module.exports = {
             .find(req.query)
             .then(dbArticle => res.json(dbArticle))
             .catch(err => res.status(422).json(err));
+    }, 
+    
+    delete: function (req, res) {
+        db.Article
+            .findById({ _id: req.params.id })
+            .then(dbModel => dbModel.remove())
+            .then(dbModel => res.json(dbModel))
+            .catch(err => res.status(422).json(err))
     }
 };
