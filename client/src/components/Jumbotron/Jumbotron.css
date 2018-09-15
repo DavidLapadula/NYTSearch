@@ -1,18 +1,23 @@
-
+.jumbotron {
+    background: url("../../images/ny-jumbo-br.png"); 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    background-size: cover; 
+}
 @media screen and (max-width: 992px) {
-    .responsive-text {
-        font-size: 75%; 
+    .responsive-text > p {
+        font-size: 100px; 
     }
   }
 
   @media screen and (max-width: 768px) {
-    .responsive-text {
-        font-size: 50%; 
+    .responsive-text > p {
+        font-size: 75px; 
     }
   }
 
   @media screen and (max-width: 640px) {
-    .responsive-text {
-        font-size: 30%; 
+    .responsive-text > p {
+        font-size: 50px; 
     }
   }

@@ -13,25 +13,24 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 class Articles extends Component {
 
-  // state = {
-  //   title: "",
-  //   startDate: "",
-  //   endDate: "",
-  //   results: [],
-  //   saved: []
-  // };
-
+  //Set the state
   constructor(props) {
     super(props)
-      this.state = {
-        title: "",
-        startDate: moment(), 
-        endDate: moment(),
-        results: [],
-        saved: []
-      }
+    this.state = {
+      title: "",
+      startDate: moment(),
+      endDate: moment(),
+      results: [],
+      saved: []
+    }
   }
 
+  //When the page loads, query the db for all saved articles
+  componentDidMount() {
+    this.getAllSaved();
+  }
+
+  // Funtctions for handling the date value of the picker element
   handleChange = ({ startDate, endDate }) => {
     startDate = startDate || this.state.startDate
     endDate = endDate || this.state.endDate
@@ -43,10 +42,7 @@ class Articles extends Component {
   handleChangeStart = (startDate) => this.handleChange({ startDate })
   handleChangeEnd = (endDate) => this.handleChange({ endDate })
 
-  // componentDidMount() {
-  //   this.getAllSaved();
-  // }
-
+  // Function for setting the title of the word to be searched
   handleInputChange = event => {
     const { name, value } = event.target;
     this.setState({
@@ -55,28 +51,27 @@ class Articles extends Component {
   };
 
 
+  // When the user submits a form, check if all the values are the state
+  // then query the NYT api and set the results array to the results using spread
   handleFormSubmit = event => {
     event.preventDefault();
-
-    if (2 > 1) {
+    if (this.state.title && this.state.startDate && this.state.endDate) {
       API.getArticles(
         this.state.title,
-        this.state.startDate,
-        this.state.endDate
+        this.state.startDate.format("YYYYMMDD"),
+        this.state.endDate.format("YYYYMMDD")
       )
         .then(res => this.setState({
           results: [...res.data.response.docs]
         }))
-        .then(() => {
-          console.log(this.state.results)
-        })
         .catch(err => console.log(err));
     }
   };
 
+  // when a save button is clicked, de-structure the results array at the index specified and save it to the db
+  // when that is done, query the db for all the saved articles
   saveArticle = index => {
     let { headline: title, web_url: url, pub_date: date } = this.state.results[index]
-
     API.saveArticle({
       title: title.main,
       url,
@@ -86,89 +81,102 @@ class Articles extends Component {
         this.getAllSaved();
       })
       .catch(err => console.log(err));
-  }
+  };
 
+  // function for getting all the saved articles and spreading them into the saved array
   getAllSaved = () => {
     API.getSavedArticles()
       .then(res => this.setState({
         saved: [...res.data]
       }))
-      .then(() => {
-        console.log(this.state.saved)
-      })
       .catch(err => console.log(err));
-  }
+  };
 
+  // delete saved article at specified id and then get all the saved articles from the database
   deleteArticle = (id) => {
     API.deleteArticle(id)
       .then(() => {
-        console.log(this.state.saved)
         this.getAllSaved()
       })
       .catch(err => console.log(err));
-  }
+  };
 
 
   render() {
     return (
-      <Container fluid>
-        <Row>
-          <Col size="12">
+        <Row className="w-100">
+          <Col size="12" className="p-0">
             <Jumbotron>
               <p className="display-2">React to the NYT</p>
               <h3 className="font-3">Search, Save, Visit, and Comment on headlines!</h3>
             </Jumbotron>
-            <Card
-              header="Search"
-            >
-              <Col size="12">
-                <form>
-                  <Input
-                    value={this.state.title}
-                    onChange={this.handleInputChange}
-                    name="title"
-                    placeholder="Title (required)"
-                  />
-                  {/* <Input
-                    value={this.state.startDate}
-                    onChange={this.handleInputChange}
-                    name="startDate"
-                    placeholder="Start Date (required)"
-                  />
-                  <Input
-                    value={this.state.endDate}
-                    onChange={this.handleInputChange}
-                    name="endDate"
-                    placeholder="End Date (required)"
-                  /> */}
-                  <DatePicker
-                    selected={this.state.startDate}
-                    selectsStart
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    onChange={this.handleChangeStart}
-                  />
-
-                  <DatePicker
-                    selected={this.state.endDate}
-                    selectsEnd
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    onChange={this.handleChangeEnd}
-                  />
-
-                  <FormBtn
-                    disabled={!this.state.title}
-                    onClick={this.handleFormSubmit}
-                  >
-                    Submit Article
-              </FormBtn>
-                </form>
+            <Row>
+              {/* Check if there are any to save using ternary */}
+            <Col size="lg-6" className="p-0">
+              <Card header="Saved">
+                {this.state.saved.length ? (
+                  <List>
+                    {this.state.saved.map((saved) => (
+                      <ListItem
+                        key={saved._id}
+                        url={saved.url}
+                        title={saved.title}
+                        date={moment(saved.date,"YYYY-MM-DD").format("DD-MM-YYYY")}>
+                        <Button onClick={() => this.deleteArticle(saved._id)}>
+                          Delete
+                      </Button>
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : (
+                    <h3>Nothing Saved</h3>
+                  )}
+              </Card>
+            </Col>
+            {/* Input Card for sending queries */}
+              <Col size="lg-6" className="p-0">
+                <Card header="Search">
+                  <form>
+                    <Input
+                      value={this.state.title}
+                      onChange={this.handleInputChange}
+                      name="title"
+                      placeholder="Title (required)"
+                    />
+                    {/* Sub row for saved and search cards */}
+                    <Row>
+                      <Col size="sm-6" className="p-0">
+                        <p className="d-inline">Start:</p>
+                        <DatePicker
+                          selected={this.state.startDate}
+                          selectsStart
+                          startDate={this.state.startDate}
+                          endDate={this.state.endDate}
+                          onChange={this.handleChangeStart}
+                        />
+                      </Col>
+                      <Col size="sm-6" className="p-0">
+                        <p className="d-inline">End:</p>
+                        <DatePicker
+                          selected={this.state.endDate}
+                          selectsEnd
+                          startDate={this.state.startDate}
+                          endDate={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                        />
+                      </Col>
+                    </Row>
+                    <FormBtn onClick={this.handleFormSubmit}>
+                      Submit Article
+                  </FormBtn>
+                  </form>
+                </Card>
               </Col>
-            </Card>
-            <Card
-              header="Results"
-            >
+            </Row>
+                 {/* Card for displaying the query results
+              Using ternary to check if they are there and
+              display message if they are not */}
+            <Card header="Results">
               {this.state.results.length ? (
                 <List>
                   {this.state.results.map((article, index) => (
@@ -176,41 +184,19 @@ class Articles extends Component {
                       key={article.web_url}
                       url={article.web_url}
                       title={article.headline.main}
-                      date={article.pub_date}>
+                      date={moment(article.pub_date,"YYYY-MM-DD").format("DD-MM-YYYY")}>
                       <Button onClick={() => this.saveArticle(index)}>
                         Save!
                       </Button>
                     </ListItem>
-                  ))}
+                  ))} 
                 </List>
               ) : (
                   <h3>No Results to Display</h3>
                 )}
             </Card>
-            <Card
-              header="Saved"
-            >
-              {this.state.saved.length ? (
-                <List>
-                  {this.state.saved.map((saved) => (
-                    <ListItem
-                      key={saved._id}
-                      url={saved.url}
-                      title={saved.title}
-                      date={saved.date}>
-                      <Button onClick={() => this.deleteArticle(saved._id)}>
-                        Delete
-                      </Button>
-                    </ListItem>
-                  ))}
-                </List>
-              ) : (
-                  <h3>Nothing Saved</h3>
-                )}
-            </Card>
           </Col>
         </Row>
-      </Container>
     );
   }
 }
