@@ -2,7 +2,7 @@ import React from "react";
 import './Card.css';
 
 const Card = props => (
-    <div className="card mt-4">
+    <div className="card mt-4 rounded-0">
         <h5 className="card-header text-center">{props.header}</h5>
         <div className="card-body">
         {props.children}

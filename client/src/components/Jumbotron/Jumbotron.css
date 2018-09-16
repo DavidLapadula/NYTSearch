@@ -3,6 +3,7 @@
     background-position: center; 
     background-repeat: no-repeat; 
     background-size: cover; 
+    color: 	rgba(235, 232, 232, 0.7);
 }
 @media screen and (max-width: 992px) {
     .responsive-text > p {

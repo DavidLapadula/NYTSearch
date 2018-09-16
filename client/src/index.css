@@ -1,18 +1,20 @@
 html {
   height: 100%; 
   padding: 20px; 
+  background-color: #141E30; 
+
 }
 body {
-  background-color: rgba(255, 255, 255, 0.5); 
   background-position: center; 
   background-repeat: no-repeat; 
   font-family: 'Noticia Text', serif;
- 
+  background-color: #141E30; 
 }
 
 .main-page {
-  background-color:  rgba(255, 255, 255, 0.164); 
   max-width: 1500px; 
+  background-color: #243b55;
+  box-shadow: 0 0 50px 10px #243b55;;
 }
 
 .font-1 {

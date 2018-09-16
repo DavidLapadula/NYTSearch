@@ -2,13 +2,13 @@ require('dotenv').config();
 
 const axios = require('axios'); 
 
-let key = '?api-key=1cf4863687224e15be90a11d808e7941'; 
+let key = '?api-key=1cf4863687224e15be90a11d808e7941';  
 
 const api = {
     // Query NYT API for articles
     getArticles: function (query, beginDate, endDate) {
         const URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-        return axios.get(`${URL}${key}&q=${query}&begin_date=${beginDate}&end_date=${endDate}`);
+        return query = axios.get(`${URL}${key}&q=${query}&begin_date=${beginDate}&end_date=${endDate}`);
     },
     // save an article to the db
     saveArticle: function(articleData) {

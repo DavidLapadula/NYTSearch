@@ -63,16 +63,23 @@ class Articles extends Component {
         this.state.endDate.format("YYYYMMDD")
       )
         .then((res) => {
+          console.log(res.data.response)
           if (res.data.response.docs.length) {
             this.setState({
               results: [...res.data.response.docs]
             })
           } else {
-            swal("Nothing to show");
+            swal({
+              title: "Nothing to show! Try Again",
+              icon: "warning",
+              dangerMode: true,
+            })
           }
+
         })
         .catch(err => console.log(err));
     }
+
   };
 
   // when a save button is clicked, de-structure the results array at the index specified and save it to the db
@@ -111,7 +118,7 @@ class Articles extends Component {
 
   render() {
     return (
-      <Row className="w-100">
+      <Row className="w-100 full-br">
         <Col size="12" className="p-0">
           <Jumbotron>
             <p className="display-2">React to the NYT</p>
@@ -120,7 +127,7 @@ class Articles extends Component {
           <Row>
             {/* Check if there are any to save using ternary */}
             <Col size="lg-6" className="p-0">
-              <Card header="Saved">
+              <Card header="Saved" className="cardBr">
                 {this.state.saved.length ? (
                   <List>
                     {this.state.saved.map((saved) => (
