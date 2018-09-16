@@ -10,6 +10,7 @@ import Card from "../../components/Card";
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
+import swal from 'sweetalert';
 
 class Articles extends Component {
 
@@ -61,9 +62,15 @@ class Articles extends Component {
         this.state.startDate.format("YYYYMMDD"),
         this.state.endDate.format("YYYYMMDD")
       )
-        .then(res => this.setState({
-          results: [...res.data.response.docs]
-        }))
+        .then((res) => {
+          if (res.data.response.docs.length) {
+            this.setState({
+              results: [...res.data.response.docs]
+            })
+          } else {
+            swal("Nothing to show");
+          }
+        })
         .catch(err => console.log(err));
     }
   };
@@ -104,14 +111,14 @@ class Articles extends Component {
 
   render() {
     return (
-        <Row className="w-100">
-          <Col size="12" className="p-0">
-            <Jumbotron>
-              <p className="display-2">React to the NYT</p>
-              <h3 className="font-3">Search, Save, Visit, and Comment on headlines!</h3>
-            </Jumbotron>
-            <Row>
-              {/* Check if there are any to save using ternary */}
+      <Row className="w-100">
+        <Col size="12" className="p-0">
+          <Jumbotron>
+            <p className="display-2">React to the NYT</p>
+            <h3 className="font-3">Search and save articles!</h3>
+          </Jumbotron>
+          <Row>
+            {/* Check if there are any to save using ternary */}
             <Col size="lg-6" className="p-0">
               <Card header="Saved">
                 {this.state.saved.length ? (
@@ -121,7 +128,7 @@ class Articles extends Component {
                         key={saved._id}
                         url={saved.url}
                         title={saved.title}
-                        date={moment(saved.date,"YYYY-MM-DD").format("DD-MM-YYYY")}>
+                        date={moment(saved.date, "YYYY-MM-DD").format("DD-MM-YYYY")}>
                         <Button onClick={() => this.deleteArticle(saved._id)}>
                           Delete
                       </Button>
@@ -134,69 +141,73 @@ class Articles extends Component {
               </Card>
             </Col>
             {/* Input Card for sending queries */}
-              <Col size="lg-6" className="p-0">
-                <Card header="Search">
-                  <form>
-                    <Input
-                      value={this.state.title}
-                      onChange={this.handleInputChange}
-                      name="title"
-                      placeholder="Title (required)"
-                    />
-                    {/* Sub row for saved and search cards */}
-                    <Row>
-                      <Col size="sm-6" className="p-0">
-                        <p className="d-inline">Start:</p>
-                        <DatePicker
-                          selected={this.state.startDate}
-                          selectsStart
-                          startDate={this.state.startDate}
-                          endDate={this.state.endDate}
-                          onChange={this.handleChangeStart}
-                        />
-                      </Col>
-                      <Col size="sm-6" className="p-0">
-                        <p className="d-inline">End:</p>
-                        <DatePicker
-                          selected={this.state.endDate}
-                          selectsEnd
-                          startDate={this.state.startDate}
-                          endDate={this.state.endDate}
-                          onChange={this.handleChangeEnd}
-                        />
-                      </Col>
-                    </Row>
-                    <FormBtn onClick={this.handleFormSubmit}>
-                      Submit Article
+            <Col size="lg-6" className="p-0">
+              <Card header="Search">
+                <form>
+                  <Input
+                    value={this.state.title}
+                    onChange={this.handleInputChange}
+                    name="title"
+                    placeholder="Title (required)"
+                  />
+                  {/* Sub row for saved and search cards */}
+                  <Row>
+                    <Col size="sm-6" className="p-0">
+                      <p className="d-inline">Start:</p>
+                      <DatePicker
+                        className="rounded p-1"
+                        selected={this.state.startDate}
+                        selectsStart
+                        startDate={this.state.startDate}
+                        endDate={this.state.endDate}
+                        onChange={this.handleChangeStart}
+                      />
+                    </Col>
+                    <Col size="sm-6" className="p-0">
+                      <p className="d-inline">End:</p>
+                      <DatePicker
+                        className="rounded p-1"
+                        selected={this.state.endDate}
+                        selectsEnd
+                        startDate={this.state.startDate}
+                        endDate={this.state.endDate}
+                        onChange={this.handleChangeEnd}
+                      />
+                    </Col>
+                  </Row>
+                  <FormBtn
+                    disabled={!this.state.title}
+                    onClick={this.handleFormSubmit}>
+                    Submit Article
                   </FormBtn>
-                  </form>
-                </Card>
-              </Col>
-            </Row>
-                 {/* Card for displaying the query results
+                </form>
+              </Card>
+            </Col>
+          </Row>
+          {/* Card for displaying the query results
               Using ternary to check if they are there and
               display message if they are not */}
-            <Card header="Results">
-              {this.state.results.length ? (
-                <List>
-                  {this.state.results.map((article, index) => (
-                    <ListItem
-                      key={article.web_url}
-                      url={article.web_url}
-                      title={article.headline.main}
-                      date={moment(article.pub_date,"YYYY-MM-DD").format("DD-MM-YYYY")}>
-                      <Button onClick={() => this.saveArticle(index)}>
-                        Save!
+          <Card header="Results">
+            {this.state.results.length ? (
+              <List>
+                {this.state.results.map((article, index) => (
+                  <ListItem
+                    key={article.web_url}
+                    url={article.web_url}
+                    title={article.headline.main}
+                    date={moment(article.pub_date, "YYYY-MM-DD").format("DD-MM-YYYY")}>
+                    <Button onClick={() => this.saveArticle(index)}>
+                      Save!
                       </Button>
-                    </ListItem>
-                  ))} 
-                </List>
-              ) : (
-                  <h3>No Results to Display</h3>
-                )}
-            </Card>
-          </Col>
-        </Row>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+                <h3>No Results to Display</h3>
+              )}
+          </Card>
+        </Col>
+      </Row>
     );
   }
 }
