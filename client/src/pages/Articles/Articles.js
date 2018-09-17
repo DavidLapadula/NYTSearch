@@ -22,10 +22,10 @@ class Articles extends Component {
       startDate: moment(),
       endDate: moment(),
       results: [],
-      saved: []
+      saved: [],
+      date: moment().format("DD-MM-YYYY")
     }
   }
-
   //When the page loads, query the db for all saved articles
   componentDidMount() {
     this.getAllSaved();
@@ -56,18 +56,32 @@ class Articles extends Component {
   // then query the NYT api and set the results array to the results using spread
   handleFormSubmit = event => {
     event.preventDefault();
+
+    if (!this.state.title) {
+      swal({
+        title: "You need to enter a title!",
+        icon: "warning",
+        dangerMode: true,
+      });
+      return;
+    }
     if (this.state.title && this.state.startDate && this.state.endDate) {
+      this.setState({
+        results: []
+      })
       API.getArticles(
         this.state.title,
         this.state.startDate.format("YYYYMMDD"),
         this.state.endDate.format("YYYYMMDD")
       )
         .then((res) => {
-          console.log(res.data.response)
           if (res.data.response.docs.length) {
-            this.setState({
-              results: [...res.data.response.docs]
-            })
+            for (let i = 0; i < 5; i++) {
+              this.setState({
+                results: this.state.results.concat(res.data.response.docs[i])
+              })
+            }
+
           } else {
             swal({
               title: "Nothing to show! Try Again",
@@ -86,10 +100,15 @@ class Articles extends Component {
   // when that is done, query the db for all the saved articles
   saveArticle = index => {
     let { headline: title, web_url: url, pub_date: date } = this.state.results[index]
+    this.setState({
+      results: this.state.results.filter((_, i) => i !== index)
+    });
+    let savedDate = this.state.date; 
     API.saveArticle({
       title: title.main,
       url,
-      date
+      date, 
+      savedDate
     })
       .then(res => {
         this.getAllSaved();
@@ -135,6 +154,7 @@ class Articles extends Component {
                         key={saved._id}
                         url={saved.url}
                         title={saved.title}
+                        savedDate={saved.savedDate}
                         date={moment(saved.date, "YYYY-MM-DD").format("DD-MM-YYYY")}>
                         <Button onClick={() => this.deleteArticle(saved._id)}>
                           Delete
@@ -183,9 +203,9 @@ class Articles extends Component {
                     </Col>
                   </Row>
                   <FormBtn
-                    disabled={!this.state.title}
+                    // disabled={!this.state.title}
                     onClick={this.handleFormSubmit}>
-                    Submit Article
+                    Submit Search
                   </FormBtn>
                 </form>
               </Card>

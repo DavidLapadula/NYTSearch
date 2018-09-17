@@ -6,7 +6,8 @@ module.exports = {
         const article = {
             title: req.body.title,
             url: req.body.url,
-            date: req.body.date
+            date: req.body.date, 
+            savedDate: req.body.savedDate
         };
         db.Article
             .create(article)
