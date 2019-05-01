@@ -13,20 +13,24 @@ This project follows the Model-View-Controller architecture by sepearting the bu
 
 ## Tech/framework used
 Front End
+
     - React.js
     - React-Router
     - CSS
     - Bootstrap
 
 Back End
+
     - Node.js 
     - Express.js
 
 Database
+
     - MongoDB (noSQL)
     - Mongoose ORM
 
 Other Technologies
+
     - Moment.js
     - Sweet Alerts
     - Axios
