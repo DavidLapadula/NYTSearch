@@ -24,11 +24,12 @@ Back End
 
 Database
     - MongoDB (noSQL)
+    - Mongoose ORM
 
 Other Technologies
     - Moment.js
-    - Sweet Alerts NPM package
-    - Axios NPM Package
+    - Sweet Alerts
+    - Axios
 
 ## How to use?
 If you want to visit the site and give it a try, there is a link below. Just follow the link, set the date range you want to search and a tile you find interesting. The app will present 5 articles from the New York Times; you can then follow the link to the article, or save it to view later
